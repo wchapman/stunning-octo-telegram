@@ -23,8 +23,10 @@ ns.send_event('evt_', label="event", timestamp=egi.ms_localtime(),
 ```python
 ns.send_event('evt_', label="event", timestamp=egi.ms_localtime(),
               table = {'fld1' : "EndTrial","fld2" : "Nothing2"})
+```
 
 ## End Experiment
+```python
 ns.StopRecording()
 ns.EndSession()
 ns.disconnect()
