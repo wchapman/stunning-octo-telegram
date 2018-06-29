@@ -33,7 +33,9 @@ class syncHardwareComponent(components.BaseComponent):
 
     def __init__(self, exp, parentName, name='syncHardware',
                  startMessage='BeginTrial',
-                 endMessage='EndTrial'):
+                 endMessage='EndTrial',
+                 ifCalibrate=False,
+                 RecordEye=False):
         super(syncHardwareComponent, self).__init__(
             exp, parentName, name=name)
 
@@ -52,6 +54,18 @@ class syncHardwareComponent(components.BaseComponent):
             updates='constant',
             hint='Code for end of Routine',
             label='endMessage')
+
+        self.params['RecordEye'] = components.Param(
+            RecordEye,
+            valType=bool, allowedTypes=[],
+            updates='constant', allowedUpdates=[]
+        )
+        self.params['ifCalibrate'] = components.Param(
+            ifCalibrate,
+            valType=bool, allowedTypes=[],
+            updates='constant', allowedUpdates=[]
+            )
+            
         # these inherited params are harmless but might as well trim:
         for p in ('startType', 'startVal', 'startEstim', 'stopVal',
                   'stopType', 'durationEstim'):

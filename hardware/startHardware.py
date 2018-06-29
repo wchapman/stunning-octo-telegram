@@ -19,7 +19,9 @@ class startHardwareComponent(components.BaseComponent):
 
     def __init__(self, exp, parentName, name='startHardware',
                  netIP='10.0.0.42',
-                 netPort=55513):
+                 netPort=55513,
+                 ifNet=False,
+                 ifEye=False):
         super(startHardwareComponent, self).__init__(
             exp, parentName, name=name)
 
@@ -38,6 +40,12 @@ class startHardwareComponent(components.BaseComponent):
             updates='constant',
             hint='port of netstation computer',
             label='netPort')
+
+        self.params['ifNet']=Param(ifNet, valType='bool', allowedTypes=[],
+            updates='constant', allowedUpdates=[])
+
+        self.params['ifEye']=Param(ifEye, valType='bool', allowedTypes=[],
+            updates='constant', allowedUpdates=[])
 
         # these inherited params are harmless but might as well trim:
         for p in ('startType', 'startVal', 'startEstim', 'stopVal',
