@@ -9,9 +9,8 @@ from psychopy.app.builder.builder import components
 #[u'C:\\Users\\William Chapman\\Documents\\GitHub\\stunning-octo-telegram\\hardwareControl\\hardwareControl', ]
 
 # the absolute path to the folder containing this path
-
 thisFolder = path.abspath(path.dirname(__file__))
-iconFile = path.join(thisFolder, 'hardware.png')
+iconFile = path.join(thisFolder, 'startHardware.png')
 
 
 class startHardwareComponent(components.BaseComponent):
@@ -41,10 +40,10 @@ class startHardwareComponent(components.BaseComponent):
             hint='port of netstation computer',
             label='netPort')
 
-        self.params['ifNet']=Param(ifNet, valType='bool', allowedTypes=[],
+        self.params['ifNet']=components.Param(ifNet, valType='bool', allowedTypes=[],
             updates='constant', allowedUpdates=[])
 
-        self.params['ifEye']=Param(ifEye, valType='bool', allowedTypes=[],
+        self.params['ifEye']=components.Param(ifEye, valType='bool', allowedTypes=[],
             updates='constant', allowedUpdates=[])
 
         # these inherited params are harmless but might as well trim:
@@ -56,21 +55,36 @@ class startHardwareComponent(components.BaseComponent):
         inits = components.getInitVals(self.params)
         depth = -self.getPosInRoutine()
 
-        code = ("import egi.simple as egi \n" +
-                "import pylinkwrapper \n" +
-                "tracker = pylinkwrapper.Connect(win, test822) \n" +
-                "ms_localtime = egi.ms_localtime \n" +
-                "ns = egi.Netstation() \n" +
-                "ns.connect() \n"
-                "ns.BeginSession() \n" +
-                "ns.sync() \n" +
-                "ns.StartRecording() \n")
-        buff.writeIndentedLines(code)
+        if self.params['ifNet'].val:
+            netCode = ("import egi.simple as egi \n" +
+                    "ms_localtime = egi.ms_localtime \n" +
+                    "ns = egi.Netstation() \n" +
+                    "ns.connect() \n"
+                    "ns.BeginSession() \n" +
+                    "ns.sync() \n" +
+                    "ns.StartRecording() \n" +
+                    "ifNet = True")
+        else:
+            netCode = ("ifNet = False")
+
+        buff.writeIndentedLines(netCode)
+
+        if self.params['ifEye'].val:
+            eyeCode = ("import pylinkwrapper \n" +
+                    "tracker = pylinkwrapper.Connect(win, filename) \n" +
+                    "ifEye = True")
+        else:
+            eyeCode = ("ifEye = False")
+
+        buff.writeIndentedLines(eyeCode)
+
 
     def writeExperimentEndCode(self, buff):
-        code = ("ns.StopRecording() \n" +
+        if self.params['ifNet'].val:
+            netCode = ("ns.StopRecording() \n" +
                 "ns.EndSession() \n" +
-                "ns.disconnect() \n" +
-                "tracker.end_experiment('.')")
-
-        buff.writeIndentedLines(code)
+                "ns.disconnect() \n")
+            buff.writeIndentedLines(netCode)
+        if self.params['ifEye'].val:
+            eyeCode = ("tracker.end_experiment('.')")
+            buff.writeIndentedLines(eyeCode)

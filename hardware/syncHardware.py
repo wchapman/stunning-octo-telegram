@@ -9,23 +9,8 @@ from psychopy.app.builder.builder import components
 #[u'C:\\Users\\William Chapman\\Documents\\GitHub\\stunning-octo-telegram\\hardwareControl\\hardwareControl', ]
 
 # the absolute path to the folder containing this path
-
 thisFolder = path.abspath(path.dirname(__file__))
-iconFile = path.join(thisFolder, 'hardware.png')
-#tooltip = components._translate('Dots: Random Dot Kinematogram')
-# only use _localized values for label values, nothing functional:
-#_localized = {'nDots': components._translate('Number of dots'),
-#              'dir': components._translate('Direction'),
-#              'speed': components._translate('Speed'),
-#              'coherence': components._translate('Coherence'),
-#              'dotSize': components._translate('Dot size'),
-#              'dotLife': components._translate('Dot life-time'),
-#              'signalDots': components._translate('Signal dots'),
-#              'noiseDots': components._translate('Noise dots'),
-#              'fieldShape': components._translate('Field shape'),
-#              'fieldSize': components._translate('Field size'),
-#              'fieldPos': components._translate('Field position'),
-#              'refreshDots':components._translate('Dot refresh rule')}
+iconFile = path.join(thisFolder, 'syncHardware.png')
 
 
 class syncHardwareComponent(components.BaseComponent):
@@ -35,7 +20,7 @@ class syncHardwareComponent(components.BaseComponent):
                  startMessage='BeginTrial',
                  endMessage='EndTrial',
                  ifCalibrate=False,
-                 RecordEye=False):
+                 RecordEye=True):
         super(syncHardwareComponent, self).__init__(
             exp, parentName, name=name)
 
@@ -57,15 +42,15 @@ class syncHardwareComponent(components.BaseComponent):
 
         self.params['RecordEye'] = components.Param(
             RecordEye,
-            valType=bool, allowedTypes=[],
+            valType='bool', allowedTypes=[],
             updates='constant', allowedUpdates=[]
         )
         self.params['ifCalibrate'] = components.Param(
             ifCalibrate,
-            valType=bool, allowedTypes=[],
+            valType='bool', allowedTypes=[],
             updates='constant', allowedUpdates=[]
             )
-            
+
         # these inherited params are harmless but might as well trim:
         for p in ('startType', 'startVal', 'startEstim', 'stopVal',
                   'stopType', 'durationEstim'):
@@ -73,15 +58,20 @@ class syncHardwareComponent(components.BaseComponent):
 
 
     def writeRoutineStartCode(self,buff):
-        code = ("ns.sync() \n" +
-                "ns.send_event() \n" +
-                "tracker.set_status('TrialActive') \n" +
-                "tracker.set_trialid() \n" +
-                "tracker.send_message('BeginTrial') \n" +
-                "tracker.record_on() \n")
+        code = ("if ifNet: \n" +
+                "   ns.sync() \n" +
+                "   ns.send_event() \n" +    #TODO
+                "if ifEye: \n" +
+                "   tracker.set_status('TrialActive') \n" +    #TODO:
+                "   tracker.set_trialid() \n" +
+                "   tracker.send_message('BeginTrial') \n" +   #TODO
+                "   tracker.record_on() \n")
 
         buff.writeIndented(code)
 
     def writeRoutineEndCode(self, buff):
-        code = ("ns.send_event() \n")
+        code = ("if ifNet: \n" +
+                "   ns.send_event() \n" +
+                " if ifEye: \n" +
+                "   tracker.record_off() \n")
         buff.writeIndented(code)
