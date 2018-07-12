@@ -12,17 +12,16 @@ ns.StartRecording()
 ```
 
 ## Begin Routine
-Must be "fld1" ... "fldN", but actual information can contain anything.
+Event labels must be EXACTLY 4 characters long
+
 ```python
 ns.sync()
-ns.send_event('evt_', label="event", timestamp=egi.ms_localtime(),
-              table = {'fld1' : "BeginTrial","fld2" : "Nothing"})
+ns.send_event('STRL', timestamp=egi.ms_localtime())
 ```
 
 ## End Routine
 ```python
-ns.send_event('evt_', label="event", timestamp=egi.ms_localtime(),
-              table = {'fld1' : "EndTrial","fld2" : "Nothing2"})
+ns.send_event('ETRL', timestamp=egi.ms_localtime())
 ```
 
 ## End Experiment
@@ -36,7 +35,7 @@ ns.disconnect()
 # Eyetracking
 
 ## Begin Experiment
-pass
+Nothing
 
 ## Begin Routine
 ```python
@@ -55,7 +54,7 @@ tracker.set_trialresult()
 ```
 
 ## End Experiment
-pass
+Nothing
 
 ---
 
@@ -64,7 +63,7 @@ pass
 ## Begin Experiment
 ```python
 import pylinkwrapper
-tracker = pylinkwrapper.Connect(win, 'test822') #TODO: expInfo
+tracker = pylinkwrapper.Connect(win, filename) # Note: refers to `filename.edf`, where filename is defined by the expinfo
 ```
 
 ## Begin routine
@@ -73,5 +72,5 @@ tracker.calibrate(cnum=9)
 ```
 ## Experiment
 ```python
-tracker.end_experiment('.')
+tracker.end_experiment('.') # receives the edf file
 ```

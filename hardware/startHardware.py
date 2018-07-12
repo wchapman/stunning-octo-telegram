@@ -35,7 +35,7 @@ class startHardwareComponent(components.BaseComponent):
             label='netIP')
 
         self.params['netPort'] = components.Param(
-            netPort, valType='code',
+            netPort, valType='num',
             updates='constant',
             hint='port of netstation computer',
             label='netPort')
@@ -59,7 +59,7 @@ class startHardwareComponent(components.BaseComponent):
             netCode = ("import egi.simple as egi \n" +
                     "ms_localtime = egi.ms_localtime \n" +
                     "ns = egi.Netstation() \n" +
-                    "ns.connect() \n"
+                    "ns.connect('%s', %s) \n" %(self.params['netIP'].val, self.params['netPort'].val) +
                     "ns.BeginSession() \n" +
                     "ns.sync() \n" +
                     "ns.StartRecording() \n" +

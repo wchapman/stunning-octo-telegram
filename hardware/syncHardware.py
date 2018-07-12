@@ -17,8 +17,8 @@ class syncHardwareComponent(components.BaseComponent):
     """An event class for presenting Random Dot stimuli"""
 
     def __init__(self, exp, parentName, name='syncHardware',
-                 startMessage='BeginTrial',
-                 endMessage='EndTrial',
+                 startMessage='STRL',
+                 endMessage='ETRL',
                  ifCalibrate=False,
                  RecordEye=True):
         super(syncHardwareComponent, self).__init__(
@@ -31,13 +31,13 @@ class syncHardwareComponent(components.BaseComponent):
         self.params['startMessage'] = components.Param(
             startMessage, valType='string',
             updates='constant',
-            hint='Code for begining of routine',
+            hint='Code for begining of routine -- 4 CHARACTERS',
             label='startMessage')
 
         self.params['endMessage'] = components.Param(
             endMessage, valType='string',
             updates='constant',
-            hint='Code for end of Routine',
+            hint='Code for end of Routine -- 4 CHARACTERS',
             label='endMessage')
 
         self.params['RecordEye'] = components.Param(
@@ -60,18 +60,18 @@ class syncHardwareComponent(components.BaseComponent):
     def writeRoutineStartCode(self,buff):
         code = ("if ifNet: \n" +
                 "   ns.sync() \n" +
-                "   ns.send_event() \n" +    #TODO
+                "   ns.send_event('%s', timestamp=egi.ms_localtime()) \n" % self.params['startMessage'].val +
                 "if ifEye: \n" +
-                "   tracker.set_status('TrialActive') \n" +    #TODO:
+                "   tracker.set_status('TrialActive') \n" +
                 "   tracker.set_trialid() \n" +
-                "   tracker.send_message('BeginTrial') \n" +   #TODO
+                "   tracker.send_message('BeginTrial') \n" +
                 "   tracker.record_on() \n")
 
         buff.writeIndented(code)
 
     def writeRoutineEndCode(self, buff):
         code = ("if ifNet: \n" +
-                "   ns.send_event() \n" +
-                " if ifEye: \n" +
+                "   ns.send_event('%s', timestamp=egi.ms_localtime()) \n" % self.params['endMessage'].val +
+                "if ifEye: \n" +
                 "   tracker.record_off() \n")
         buff.writeIndented(code)
