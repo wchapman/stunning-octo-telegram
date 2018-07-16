@@ -10,7 +10,7 @@ The `hardware` directory contains a module for controlling Eyelink and Netstatio
 - For Eyelink: https://github.com/ndiquattro/pylinkwrapper
 - For Nestation: https://github.com/gaelen/python-egi
 
-To install these modules in PsychoPy (standalone version), clone or download the repositories and place them in PsychoPy/lib/site-libraries (eg: `C:\Program Files\PsychoPy2\lib\site-libraries`)
+To install these modules in PsychoPy (standalone version), clone or download the repositories and place them in PsychoPy/lib/site-libraries (eg: `C:\Program Files\PsychoPy2\lib\site-packages`)
 
 To install these modules in PsychoPy (environment version), clone or download and install with the respective setup.py files.
 
@@ -19,7 +19,8 @@ To install these modules in PsychoPy (environment version), clone or download an
 1. Download the repositories be either:
   - "Download Zip" and placing wherever you desire
   - Cloning into wherever you desire.
-2. Open PsychoPy, and go to File > Preferences > Builder > Component path
+2. Open PsychoPy, and go to File > Preferences > Builder > Component Folder
+  - eg `C:\Users\Me\Downloads\stunnin-octog-telegram\hardware`
 3. In the text box, add the full path to wherever you placed the repository
 4. Restart PsychoPy
 
