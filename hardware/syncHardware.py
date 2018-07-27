@@ -58,20 +58,30 @@ class syncHardwareComponent(components.BaseComponent):
 
 
     def writeRoutineStartCode(self,buff):
-        code = ("if ifNet: \n" +
-                "   ns.sync() \n" +
-                "   ns.send_event('%s', timestamp=egi.ms_localtime()) \n" % self.params['startMessage'].val +
-                "if ifEye: \n" +
-                "   tracker.set_status('TrialActive') \n" +
-                "   tracker.set_trialid() \n" +
-                "   tracker.send_message('BeginTrial') \n" +
-                "   tracker.record_on() \n")
+        if self.params['ifCalibrate'].val:
+            code = ("if ifNet: \n" +
+                    "    tracker.calibrate(cnum=9) \n" +
+                    "\n")
+        else:
+            code = ("if ifNet: \n" +
+                    "    ns.sync() \n" +
+                    "    ns.send_event('%s', timestamp=egi.ms_localtime()) \n" % self.params['startMessage'].val +
+                    "\n" +
+                    "if ifEye: \n" +
+                    "    tracker.set_status('TrialActive') \n" +
+                    "    tracker.set_trialid() \n" +
+                    "    tracker.send_message('BeginTrial') \n" +
+                    "    tracker.record_on() \n"+
+                    "\n")
 
-        buff.writeIndented(code)
+        buff.writeIndentedLines(code)
 
     def writeRoutineEndCode(self, buff):
-        code = ("if ifNet: \n" +
-                "   ns.send_event('%s', timestamp=egi.ms_localtime()) \n" % self.params['endMessage'].val +
-                "if ifEye: \n" +
-                "   tracker.record_off() \n")
-        buff.writeIndented(code)
+        if self.params['ifCalibrate']:
+            pass
+        else:
+            code = ("if ifNet: \n" +
+                    "    ns.send_event('%s', timestamp=egi.ms_localtime()) \n" % self.params['endMessage'].val +
+                    "if ifEye: \n" +
+                    "    tracker.record_off() \n")
+            buff.writeIndentedLines(code)

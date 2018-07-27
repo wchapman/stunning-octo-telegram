@@ -71,7 +71,7 @@ class startHardwareComponent(components.BaseComponent):
 
         if self.params['ifEye'].val:
             eyeCode = ("import pylinkwrapper \n" +
-                    "tracker = pylinkwrapper.Connect(win, filename) \n" +
+                    "tracker = pylinkwrapper.Connect(win, expInfo['participant']) \n" +
                     "ifEye = True")
         else:
             eyeCode = ("ifEye = False")
